@@ -39,9 +39,8 @@ public class ProcessDig {
             }
 
             for (int id: users){
-//                if (id != 474){
-//                    continue;
-//                }
+                Date pre_date = null;
+
                 //保存用户编译时间
                 List<String> buildTime = FileUtil.getDirTimes(PropertiesUtil.getProperties("BUILD_FILE_LOCATION") + "\\" + id);
                 Map<String, String> headers = new HashMap<>();
@@ -57,22 +56,70 @@ public class ProcessDig {
                     time = time.replace(" ", "-");
                     Date date = df.parse(time);
 
-                    if (name.contains(".h")){
-                        headers.put(name,code);
-                    } else if (name.contains(".cpp")){
-                        cpps.put(name, code);
-                    }
-
                     total++;
+                    //找到最近的编译记录
+                    String currentLocation = null;
+                    Date closestBuildDate = null;
                     for (int i = 0; i < buildTime.size(); i++){
                         String buildLocation = buildTime.get(i);
                         Date build = df.parse(buildLocation.substring(buildLocation.lastIndexOf("\\") + 1));
-                        if (Math.abs(build.getTime() - date.getTime()) < 1000){
+
+                        if(build.getTime() - date.getTime() <= 1000){
+                            currentLocation = buildLocation;
+                            closestBuildDate = build;
+                        }else{
+                            break;
+                        }
+                    }
+
+                    //如果是编译刷入的，那么以编译记录为住
+                    boolean needCopyPre = false;
+                    boolean isPreFromBuild = false;
+                    boolean isContentFromBuild = false;
+
+                    if(closestBuildDate == null && pre_date == null){
+                        //无事发生
+                        needCopyPre = false;
+                        isPreFromBuild = false;
+                        isContentFromBuild = false;
+                    }else if (closestBuildDate == null && pre_date != null){
+                        needCopyPre = true;
+                        isPreFromBuild = false;
+                        isContentFromBuild = false;
+                    }else if(closestBuildDate != null && pre_date == null){
+                        needCopyPre =true;
+                        isPreFromBuild = true;
+                        isContentFromBuild = closestBuildDate.getTime() >= date.getTime();
+                    }else{
+                        if(closestBuildDate.getTime() > pre_date.getTime()){
+                            needCopyPre =true;
+                            isPreFromBuild = true;
+                            isContentFromBuild = closestBuildDate.getTime() >= date.getTime();
+                        }else{
+                            needCopyPre = true;
+                            isPreFromBuild = false;
+                            isContentFromBuild = false;
+                        }
+                    }
+
+                    if(needCopyPre){
+                        if(isPreFromBuild){
                             headers.clear();
                             cpps.clear();
-                            headers.putAll(getBuildFiles(buildLocation, exam, true));
-                            cpps.putAll(getBuildFiles(buildLocation, exam, false));
-                            break;
+                            headers.putAll(getBuildFiles(currentLocation, exam, true));
+                            cpps.putAll(getBuildFiles(currentLocation, exam, false));
+                        }
+                    }else{
+                        headers.clear();
+                        cpps.clear();
+                    }
+
+                    //判断是否需要使用当前的文件
+                    if(!isContentFromBuild){
+                        if (name.contains(".h")){
+                            headers.put(name,code);
+                        } else if (name.contains(".cpp")){
+                            cpps.put(name, code);
                         }
                     }
 
@@ -88,6 +135,9 @@ public class ProcessDig {
                         num++;
                         FileUtil.removeFile(fileDir);
                     }
+
+                    //记录当前保存时间
+                    pre_date = date;
                 }
             }
         } catch (SQLException | ParseException e) {
@@ -130,10 +180,11 @@ public class ProcessDig {
             for (Map.Entry<String, String> entry: fileInfo.entrySet())   {
                 String fileLocation = fileDir  + "\\" + entry.getKey();
                 FileUtil.writeFile(entry.getValue(), fileLocation);
-                if (!isHeader && !CppBuild.getBuildStatus(fileDir, true)){
-                    FileUtil.removeFile(fileLocation);
-                    result = false;
-                }
+//                这里不做检查，只提文件版本
+//                if (!isHeader && !CppBuild.getBuildStatus(fileDir, true)){
+//                    FileUtil.removeFile(fileLocation);
+//                    result = false;
+//                }
             }
         }
         return result;
