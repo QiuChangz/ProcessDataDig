@@ -219,9 +219,9 @@ public class ProcessDig {
         String exam = PropertiesUtil.getProperties("EXAM");
 //        String exams[] = {"exam1", "exam2", "exam3", "exam4"};
 //        for (String exam: exams){
-            String fileLocation = PropertiesUtil.getProperties("OUTPUT");
-            String[] topUsers = getTopUsers(Integer.valueOf(PropertiesUtil.getProperties("SCORE_LIMIT")));
-            pd.setAllSaveCode(exam, fileLocation, topUsers);
+        String fileLocation = PropertiesUtil.getProperties("OUTPUT");
+        String[] topUsers = getTopUsers(Integer.valueOf(PropertiesUtil.getProperties("SCORE_LIMIT")));
+        pd.setAllSaveCode(exam, fileLocation, topUsers);
 //        }
     }
 }
