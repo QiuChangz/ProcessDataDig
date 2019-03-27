@@ -195,7 +195,7 @@ public class ProcessDig {
     }
 
 
-    public static String[] getTopUsers(String exam, int limit){
+    public static String[] getTopUsers(int limit){
         Connection connection = DBUtil.getMySqlDBConnection(PropertiesUtil.getProperties("MYSQL"));
         Statement statement = null;
         ResultSet resultSet = null;
@@ -220,7 +220,7 @@ public class ProcessDig {
 //        String exams[] = {"exam1", "exam2", "exam3", "exam4"};
 //        for (String exam: exams){
             String fileLocation = PropertiesUtil.getProperties("OUTPUT");
-            String[] topUsers = getTopUsers(PropertiesUtil.getProperties("EXAM"), Integer.valueOf(PropertiesUtil.getProperties("SCORE_LIMIT")));
+            String[] topUsers = getTopUsers(Integer.valueOf(PropertiesUtil.getProperties("SCORE_LIMIT")));
             pd.setAllSaveCode(exam, fileLocation, topUsers);
 //        }
     }
