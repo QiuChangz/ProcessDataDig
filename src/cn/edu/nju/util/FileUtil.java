@@ -92,14 +92,23 @@ public class FileUtil {
 
     public static String readFile(File file){
         StringBuilder content = new StringBuilder();
+        BufferedReader reader =null;
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charsetDetector.guessFileEncoding(file)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charsetDetector.guessFileEncoding(file)));
             String tmp = null;
             while ((tmp = reader.readLine()) != null){
                 content.append(tmp).append("\r\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return content.toString();

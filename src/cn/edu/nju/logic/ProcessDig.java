@@ -147,7 +147,7 @@ public class ProcessDig {
     }
 
     //收集旧数据中编译文件夹中的头文件
-    private Map<String, String> getBuildFiles(String fileLocation, String exam, boolean isHeader){
+    public static Map<String, String> getBuildFiles(String fileLocation, String exam, boolean isHeader){
         String suffix = isHeader ? ".h" : ".cpp";
         String[] questions = {"Q102", "Q103", "Q139", "Q141"};
         String question = questions[Integer.valueOf(exam.substring(4)) - 1];
@@ -174,7 +174,7 @@ public class ProcessDig {
         }
         return buildFiles;
     }
-    private boolean writeToFile(Map<String, String> fileInfo, String fileDir, boolean isHeader){
+    public static boolean writeToFile(Map<String, String> fileInfo, String fileDir, boolean isHeader){
         boolean result = true;
         if (!fileInfo.isEmpty()){
             for (Map.Entry<String, String> entry: fileInfo.entrySet())   {
