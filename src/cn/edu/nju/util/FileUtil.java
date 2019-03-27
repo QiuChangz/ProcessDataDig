@@ -33,7 +33,7 @@ public class FileUtil {
         writeFile(content, path, false);
     }
 
-    static void writeFile(String content, String path, boolean add){
+    public static void writeFile(String content, String path, boolean add){
         File file = new File(path);
         try {
             if (!file.exists()){
