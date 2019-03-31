@@ -36,8 +36,8 @@ public class CleanBuildFile {
 
 
         try {
-            Date startTime = df.parse("2017-12-21-07-50-00");
-            Date endTime = df.parse("2017-12-21-12-30-00");
+            Date startTime = df.parse("2017-12-07-07-50-00");
+            Date endTime = df.parse("2017-12-07-12-30-00");
             for(File user_root : rootFile.listFiles()){
                 if (user_root.isFile()) {
                     System.out.println("用户根目录错误：" + user_root.getName());

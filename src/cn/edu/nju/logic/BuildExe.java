@@ -49,6 +49,10 @@ public class BuildExe {
                 if (date.isFile()){
                     continue;
                 }
+
+                if (date.listFiles() == null || date.listFiles().length == 0){
+                    continue;
+                }
                 StringBuilder command = new StringBuilder(PropertiesUtil.getProperties("BAT_PATH")).append(" ");
                 String path = date.getAbsolutePath() + "\\";
                 String dstExePath = dstPath + path.substring(filePath.length());
@@ -62,7 +66,7 @@ public class BuildExe {
         }
     }
 
-    private static void scp(String srcPath, String outputName, String dstPath){
+    public static void scp(String srcPath, String outputName, String dstPath){
             File srcDir = new File(srcPath);
             File srcExe = new File(srcPath + outputName);
             File desExePath = new File(dstPath);
@@ -91,7 +95,7 @@ public class BuildExe {
                                 continue;
                             }
                         }
-                        FileUtils.copyFile(srcExe, desExe);
+                        FileUtils.copyFile(srcFile, desExe);
                     }
                 }
             } catch (IOException e) {
